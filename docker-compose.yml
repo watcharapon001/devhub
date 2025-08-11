@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: devhub_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports: ["5432:5432"]
+    volumes:
+      - devhub_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/api/Dockerfile
+    container_name: devhub_web
+    environment:
+      # ⬇️ .NET จะ bind เป็น Jwt:Key, Jwt:Issuer, Jwt:Audience
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "DevHub"
+      Jwt__Audience: "DevHub.Client"
+
+      # ใช้ค่าใน Infrastructure: ถ้ามี DB_CONNECTION จะ override ConnectionStrings:Postgres
+      DB_CONNECTION: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${DB_PASSWORD}"
+
+      # เลือกได้: กำหนด ASPNETCORE_ENVIRONMENT
+      ASPNETCORE_ENVIRONMENT: "Production"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["5000:5000"]
+    # ถ้าอยากดู log EF/SQL เพิ่ม ให้เปิดด้านล่าง
+    # logging:
+    #   driver: "json-file"
+
+volumes:
+  devhub_pg:
