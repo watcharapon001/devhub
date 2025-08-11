@@ -1,0 +1,44 @@
+# ----- OS / IDE -----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.user
+*.suo
+
+# ----- Git -----
+.git-*
+
+# ----- .NET -----
+[Bb]in/
+[Oo]bj/
+*.pidb
+*.svclog
+*.mdb
+*.opendb
+*.dbmdl
+*.userprefs
+*.publishsettings
+
+# ASP.NET runtime artifacts
+backend/src/Presentation/Web/wwwroot/
+# ถ้าคุณมี asset ที่ต้อง commit ใน wwwroot ให้เอาโฟลเดอร์นั้นออกจาก ignore และใส่ .gitkeep แทน
+
+# ----- Node / Angular -----
+**/node_modules/
+**/dist/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Angular cache
+.angular/
+**/.angular/cache/
+
+# ----- EF Core -----
+*.db
+*.sqlite
+
+# ----- Docker -----
+**/.docker/
+**/.env
